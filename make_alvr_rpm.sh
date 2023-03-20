@@ -2,7 +2,7 @@
 
 # 1. Copy this to the ALVR root dir.
 # 2. Change the version to match the checked out ALVR version.
-# 3. 
+# 3. run this script
 
 ALVR_VERSION="19.1.0"
 
@@ -10,15 +10,19 @@ ALVR_VERSION="19.1.0"
 CUR_DIR=$(pwd)
 echo ${CUR_DIR}
 
+sudo dnf install clang curl nasm pkgconf yasm vulkan-headers unzip ffmpeg rust cargo libunwind-devel \
+                 pipewire-jack-audio-connection-kit-devel cairo-gobject-devel \
+                 cargo clang-devel rust rust-atk-sys-devel rust-cairo-sys-rs-devel \
+                 rust-gdk-sys-devel rust-glib-sys-devel rust-pango-sys-devel \
+                 selinux-policy-devel
+
+cargo xtask prepare-deps --platform linux
+cargo xtask build-server --release
+
 if ! command -v fpm &> /dev/null
 then
     echo "fpm could not be found"
     gem install fpm
-    sudo dnf install -y pipewire-jack-audio-connection-kit-devel cairo-gobject-devel \
-                     cargo clang-devel rust rust-atk-sys-devel rust-cairo-sys-rs-devel \
-                     rust-gdk-sys-devel rust-glib-sys-devel rust-pango-sys-devel \
-                     selinux-policy-devel
-    exit
 fi
 
 fpm \
